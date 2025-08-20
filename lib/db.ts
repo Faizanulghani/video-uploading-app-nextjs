@@ -20,7 +20,9 @@ export async function dbConnect() {
   }
 
   if (!cached.promise) {
-    mongoose.connect(MONGODB_URI).then(() => mongoose.connection);
+    cached.promise = mongoose
+      .connect(MONGODB_URI)
+      .then(() => mongoose.connection);
   }
 
   try {
