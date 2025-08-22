@@ -2,20 +2,21 @@ import { getUploadAuthParams } from "@imagekit/next/server";
 
 export async function GET() {
   try {
-    const authenticationParameters = getUploadAuthParams({
-      privateKey: process.env.IMAGEKIT_PRIVATE_KEY as string,
-      publicKey: process.env.NEXT_PUBLIC_PUBLIC_KEY as string,
+    if (!process.env.IMAGEKIT_PRIVATE_KEY) {
+      console.error("❌ IMAGEKIT_PRIVATE_KEY not found");
+    }
+
+    const authParams = getUploadAuthParams({
+      privateKey: process.env.IMAGEKIT_PRIVATE_KEY!,
     });
 
-    return Response.json({
-      authenticationParameters,
-      publicKey: process.env.NEXT_PUBLIC_PUBLIC_KEY,
-    });
+    console.log("✅ Auth Params:", authParams);
+
+    return Response.json(authParams);
   } catch (error) {
+    console.error("❌ Error in /api/imagekit-auth:", error);
     return Response.json(
-      {
-        error: "Failed to get authentication parameters",
-      },
+      { error: "Failed to get authentication parameters" },
       { status: 500 }
     );
   }
